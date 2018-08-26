@@ -1,0 +1,37 @@
+#!/usr/bin/env php
+<?php
+
+defined('ROOT') ?: define('ROOT', __DIR__ . DIRECTORY_SEPARATOR);
+
+$loader = require ROOT . 'vendor/autoload.php';
+
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use Symfony\Component\Dotenv\Dotenv;
+use Slim\Container;
+use Symfony\Component\Console\Application;
+
+if (file_exists(ROOT . '.env')) {
+    $dotenv = new Dotenv();
+    $dotenv->load(ROOT . '.env');
+}
+else {
+    echo "No \".env\" file found at the project root !";
+    die();
+}
+
+AnnotationRegistry::registerLoader([$loader, 'loadClass']);
+
+$settings = require ROOT . 'config/settings.php';
+$container = new Container($settings);
+
+require ROOT . 'config/services.php';
+
+$application = new Application();
+
+$commands = require ROOT . 'config/commands.php';
+foreach ($commands as $command) {
+    $command->setContainer($container);
+    $application->add($command);
+}
+
+$application->run();

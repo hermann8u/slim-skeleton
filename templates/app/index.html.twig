@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <p class="subtitle">This page list all available routes for current user. {% if not isLogged %}Login to see more.{% endif %}</p>
+
+    {% for name, group in groups %}
+        <h2>{{ name|title ?: 'App' }}</h2>
+        <table class="u-full-width">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Methods</th>
+                    <th>Pattern</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for route in group %}
+                    <tr>
+                        <td>{{ route.name }}</td>
+                        <td>{% for method in route.methods %}<span class="badge">{{ method }}</span>{% endfor %}</td>
+                        <td><code>{{ route.pattern }}</code></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <br/>
+    {% endfor %}
+{% endblock %}
